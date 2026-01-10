@@ -49,7 +49,7 @@ echo
 # -kernel           : Load our kernel binary
 # -serial mon:stdio : Connect serial port to terminal
 $QEMU \
-    -machine virt \
+    -machine virt,gic-version=2 \
     -cpu cortex-a72 \
     -m 512M \
     -nographic \

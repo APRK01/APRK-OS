@@ -42,6 +42,9 @@ mod regs {
     
     /// Interrupt Mask Set/Clear Register
     pub const IMSC: usize = 0x38;
+
+    /// Interrupt Clear Register
+    pub const ICR: usize = 0x44;
 }
 
 /// Flag Register bits
@@ -127,9 +130,10 @@ impl Uart {
 
         // Clear all pending interrupts
         self.write_reg(regs::IMSC, 0);
+        self.write_reg(regs::ICR, 0x7FF); // Clear all interrupts
 
         // Enable Receive Interrupt (RXIM) and Receive Timeout (RTIM)
-        self.write_reg(regs::IMSC, imsc::RXIM | imsc::RTIM);
+        // self.write_reg(regs::IMSC, imsc::RXIM | imsc::RTIM);
 
         // Set baud rate (115200 with 24MHz clock)
         // Divider = 24000000 / (16 * 115200) = 13.0208
@@ -294,5 +298,20 @@ pub fn handle_irq() {
 
 /// Read a character from the serial port (non-blocking).
 pub fn get_char() -> Option<u8> {
-    RX_BUFFER.lock().pop()
+    // DEBUG: Polling Mode (Bypass Interrupts)
+    let uart = Uart::new(UART0_BASE);
+    if uart.read_reg(regs::FR) & flags::RXFE == 0 {
+        let c = (uart.read_reg(regs::DR) & 0xFF) as u8;
+        return Some(c);
+    }
+    None
+
+    /*
+    // Disable interrupts to prevent deadlock with IRQ handler
+    crate::cpu::disable_interrupts();
+    let result = RX_BUFFER.lock().pop();
+    // Re-enable interrupts
+    unsafe { crate::cpu::enable_interrupts(); }
+    result
+    */
 }

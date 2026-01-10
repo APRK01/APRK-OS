@@ -17,6 +17,7 @@ const GICC_BASE: usize = 0x0801_0000;
 // Distributor Registers
 const GICD_CTLR: usize = 0x000;       // Control Register
 const GICD_ISENABLER: usize = 0x100;  // Interrupt Set-Enable Registers
+const GICD_ITARGETSR: usize = 0x800;  // Interrupt Processor Targets Registers
 
 // CPU Interface Registers
 const GICC_CTLR: usize = 0x0000;      // Control Register
@@ -57,6 +58,21 @@ impl Gic {
         let mut current_enable_u = read_gicd(GICD_ISENABLER + reg_offset_u);
         current_enable_u |= bit_u;
         write_gicd(GICD_ISENABLER + reg_offset_u, current_enable_u);
+
+        // Route UART Interrupt (SPI 33) to CPU 0
+        // ITARGETSR registers are byte-accessible or word-accessible.
+        // Each interrupt has an 8-bit field.
+        // Offset for ID 33: 0x800 + 33 -> But let's align to 4 bytes.
+        // ID 32-35 are in ITARGETSR8 (Offset 0x820).
+        let target_reg_offset = (uart_irq / 4) * 4; // 33/4 = 8 * 4 = 32 (0x20)
+        let target_shift = (uart_irq % 4) * 8;      // 33%4 = 1 * 8 = 8
+        
+        // Read-Modify-Write target register
+        let mut current_target = read_gicd(GICD_ITARGETSR + target_reg_offset);
+        // Set target for ID 33 to CPU 0 (Map: 0x01) or All (0xFF)
+        // We'll trust CPU 0 is bit 0.
+        current_target |= 0x01 << target_shift; // CPU Interface 0
+        write_gicd(GICD_ITARGETSR + target_reg_offset, current_target);
 
         // ---------------------------------------------------------------------
         // 2. CPU Interface Initialization

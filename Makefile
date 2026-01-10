@@ -18,6 +18,10 @@ YELLOW = \033[0;33m
 RED = \033[0;31m
 NC = \033[0m # No Color
 
+# Disk Configuration
+DISK_DIR = disk_root
+DISK_IMG = disk.tar
+
 # =============================================================================
 # Main Targets
 # =============================================================================
@@ -25,8 +29,20 @@ NC = \033[0m # No Color
 .PHONY: all
 all: build ## Build everything
 
+.PHONY: disk
+disk: ## Create RAM disk image
+	@echo "$(GREEN)[DISK]$(NC) Creating disk image..."
+	@mkdir -p $(DISK_DIR)
+	@if [ ! -f $(DISK_DIR)/hello.txt ]; then \
+		echo "Hello from APRK OS Filesystem!" > $(DISK_DIR)/hello.txt; \
+		echo "This is a read-only RAM disk." > $(DISK_DIR)/readme.md; \
+		echo "APRK OS v0.0.1" > $(DISK_DIR)/version; \
+	fi
+	@# Create tar from directory content, not directory itself
+	@cd $(DISK_DIR) && tar -cf ../$(DISK_IMG) --format=ustar *
+
 .PHONY: build
-build: ## Build the kernel (debug mode)
+build: disk ## Build the kernel (debug mode)
 	@echo "$(GREEN)[BUILD]$(NC) Building APRK OS kernel (debug)..."
 	cargo build
 	@echo "$(GREEN)[BUILD]$(NC) Done! Kernel at $(KERNEL_BIN)"

@@ -21,6 +21,7 @@ use core::panic::PanicInfo;
 mod mm;
 mod sched;
 mod shell;
+pub mod fs;
 
 // Task 1 Function (Replaced by Shell)
 // extern "C" fn task_one() { ... }
