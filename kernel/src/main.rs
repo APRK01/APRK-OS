@@ -28,44 +28,7 @@ mod loader;
 // extern "C" fn task_one() { ... }
 
 
-// User Process (EL0)
-extern "C" fn user_land() {
-    loop {
-        // SYSCALL (SVC)
-        unsafe {
-            core::arch::asm!(
-                "mov x8, #42",
-                "svc #0",
-                options(nostack)
-            );
-            
-            for _ in 0..10_000_000 { core::arch::asm!("nop") }
-        }
-    }
-}
-
-// Task 2 Function (Kernel Wrapper for User Mode)
-extern "C" fn task_two() {
-    unsafe { arch::cpu::enable_interrupts(); }
-    
-    println!("Task 2: Dropping to EL0 (User Mode)...");
-    
-    // We need a stack for EL0. We'll just use the current stack base?
-    // Current stack is growing down.
-    // Let's allocate a small buffer on stack? No, that's dangerous.
-    // Let's grab a new page.
-    // But we don't have access to heap here easily without `alloc`? We do.
-    
-    let user_stack = Vec::<u8>::with_capacity(4096);
-    let user_stack_top = user_stack.as_ptr() as u64 + 4096;
-    
-    // Forget the vec so it doesn't free
-    core::mem::forget(user_stack);
-    
-    unsafe {
-        arch::context::enter_user_mode(user_land as *const () as u64, user_stack_top);
-    }
-}
+// =============================================================================
 // Version Information
 // =============================================================================
 
