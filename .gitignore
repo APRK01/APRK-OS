@@ -1,0 +1,20 @@
+# Git Ignore for APRK OS
+
+# Rust artifacts
+target/
+**/*.rs.bk
+Cargo.lock
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS artifacts
+.DS_Store
+
+# QEMU / Temp files
+*.img
+*.bin
+qemu-vga.log

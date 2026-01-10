@@ -1,0 +1,35 @@
+APRK OS MAINTAINERS
+===================
+
+This file contains the list of maintainers for APRK OS subsystems.
+
+Descriptions of section entries:
+
+	M: Maintainer's name and email
+	S: Status (Maintained, Supported, Orphan)
+	F: Files and directories
+
+THE REST
+--------
+M:	APRK
+S:	Maintained
+F:	*
+F:	*/
+
+ARCHITECTURE - ARM64
+--------------------
+M:	APRK
+S:	Maintained
+F:	arch/arm64/
+
+MEMORY MANAGEMENT
+-----------------
+M:	APRK
+S:	Maintained
+F:	kernel/src/mm/
+
+SCHEDULER
+---------
+M:	APRK
+S:	Maintained
+F:	kernel/src/sched/

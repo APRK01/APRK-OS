@@ -1,0 +1,20 @@
+# =============================================================================
+# APRK OS - Cargo Configuration
+# =============================================================================
+# Cross-compilation settings for bare-metal ARM64
+# =============================================================================
+
+[build]
+target = "aarch64-unknown-none"
+
+[target.aarch64-unknown-none]
+rustflags = [
+    "-C", "link-arg=-Tkernel/src/linker.ld",
+    "-C", "target-feature=-neon,-fp-armv8",
+]
+
+runner = "scripts/qemu-run.sh"
+
+[unstable]
+build-std = ["core", "alloc", "compiler_builtins"]
+build-std-features = ["compiler-builtins-mem"]

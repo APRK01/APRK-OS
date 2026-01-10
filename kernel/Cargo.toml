@@ -1,0 +1,16 @@
+# =============================================================================
+# APRK OS - Kernel Crate
+# =============================================================================
+# The core kernel implementation
+# =============================================================================
+
+[package]
+name = "aprk-kernel"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+aprk-arch-arm64 = { path = "../arch/arm64" }
+spin.workspace = true
