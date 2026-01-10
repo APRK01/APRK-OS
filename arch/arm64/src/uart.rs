@@ -57,6 +57,8 @@ mod flags {
 mod imsc {
     /// Receive Interrupt Mask (RXIM) - bit 4
     pub const RXIM: u32 = 1 << 4;
+    /// Receive Timeout Interrupt Mask (RTIM) - bit 6
+    pub const RTIM: u32 = 1 << 6;
 }
 
 /// Line Control Register bits
@@ -126,8 +128,8 @@ impl Uart {
         // Clear all pending interrupts
         self.write_reg(regs::IMSC, 0);
 
-        // Enable Receive Interrupt (RXIM)
-        self.write_reg(regs::IMSC, imsc::RXIM);
+        // Enable Receive Interrupt (RXIM) and Receive Timeout (RTIM)
+        self.write_reg(regs::IMSC, imsc::RXIM | imsc::RTIM);
 
         // Set baud rate (115200 with 24MHz clock)
         // Divider = 24000000 / (16 * 115200) = 13.0208
@@ -285,8 +287,9 @@ pub fn handle_irq() {
         }
     }
     
-    // Clear RX Interrupt (UARTICR bit 4)
-    uart.write_reg(0x44, 1 << 4);
+    // Clear RX Interrupt (RXIC) and Timeout (RTIC)
+    // UARTICR (0x44) bit 4 (RXIC) and bit 6 (RTIC)
+    uart.write_reg(0x44, (1 << 4) | (1 << 6));
 }
 
 /// Read a character from the serial port (non-blocking).
