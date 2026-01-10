@@ -37,7 +37,7 @@ pub extern "C" fn handle_sync_exception() {
     
     let ec = (esr >> 26) & 0x3F;
     
-    // EC = 0x15 is SVC (System Call) from AArch64
+
     // EC = 0x15 is SVC (System Call) from AArch64
     if ec == 0x15 {
         let id: u64;
@@ -53,7 +53,15 @@ pub extern "C" fn handle_sync_exception() {
                 out(reg) arg0,
                 out(reg) arg1
             );
+            
             kernel_syscall_handler(id, arg0, arg1);
+
+            // Advance ELR_EL1 by 4 bytes to skip the SVC instruction
+            // preventing an infinite loop.
+            let mut elr: u64;
+            core::arch::asm!("mrs {0}, elr_el1", out(reg) elr);
+            elr += 4;
+            core::arch::asm!("msr elr_el1, {0}", in(reg) elr);
         }
         return; // Return to user
     }
