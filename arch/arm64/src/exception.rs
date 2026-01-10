@@ -9,6 +9,10 @@ use crate::gic::Gic;
 use crate::timer::Timer;
 use core::time::Duration;
 
+extern "C" {
+    fn kernel_syscall_handler(id: u64, arg0: u64, arg1: u64);
+}
+
 /// Initialize exceptions.
 /// Sets the VBAR_EL1 register to point to our vector table.
 pub unsafe fn init() {
@@ -34,13 +38,23 @@ pub extern "C" fn handle_sync_exception() {
     let ec = (esr >> 26) & 0x3F;
     
     // EC = 0x15 is SVC (System Call) from AArch64
+    // EC = 0x15 is SVC (System Call) from AArch64
     if ec == 0x15 {
-        let syscall_num: u64;
+        let id: u64;
+        let arg0: u64;
+        let arg1: u64;
         unsafe {
-             // x8 holds syscall number in Linux/ARM64 ABI
-            core::arch::asm!("mov {}, x8", out(reg) syscall_num);
+             // x8 holds syscall number, x0, x1 holds args
+            core::arch::asm!(
+                "mov {0}, x8",
+                "mov {1}, x0",
+                "mov {2}, x1",
+                out(reg) id,
+                out(reg) arg0,
+                out(reg) arg1
+            );
+            kernel_syscall_handler(id, arg0, arg1);
         }
-        println!("[syscall] SVC Called! Num: {}", syscall_num);
         return; // Return to user
     }
     

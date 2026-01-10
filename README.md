@@ -20,7 +20,7 @@
 
 ## Overview
 
-**APRK OS** is an operating system kernel built from scratch, following the philosophy of understanding every line of code. Like Linux started as a hobby project, APRK OS aims to be both educational and functional.
+**APRK OS** is a modern operating system kernel built from scratch in Rust. It aims to completely master the hardware, providing a robust, Type-Safe foundation for ARM64 computing.
 
 - **Architecture**: ARM64 (AArch64)
 - **Language**: Rust + Assembly
@@ -135,7 +135,7 @@ aprk-os/
 │           ├── boot.S       # Assembly entry point
 │           ├── uart.rs      # Serial driver
 │           └── cpu.rs       # CPU utilities
-├── Documentation/           # Linux-style documentation
+├── Documentation/           # System documentation
 ├── scripts/                 # Build and run scripts
 ├── Cargo.toml              # Workspace configuration
 └── Makefile                # Build automation
@@ -143,7 +143,7 @@ aprk-os/
 
 ## Documentation
 
-Documentation follows the Linux kernel style:
+Documentation follows a structured format:
 
 - `Documentation/process/` — Development guidelines
 - `Documentation/arch/arm64/` — ARM64 specifics
@@ -160,7 +160,7 @@ This project is licensed under the GNU General Public License v2.0 — see the [
 
 ## Acknowledgments
 
-- **Linux Kernel** — For inspiration and the development model
+- **Rust Embedded Community** — For excellent no_std resources
 - **Rust Community** — For excellent bare-metal support
 - **QEMU Project** — For making ARM64 development accessible
 

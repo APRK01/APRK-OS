@@ -54,5 +54,18 @@ pub fn read_sp() -> u64 {
     unsafe {
         core::arch::asm!("mov {}, sp", out(reg) sp);
     }
+
     sp
+}
+
+/// Flush the Instruction Cache.
+/// Should be called after modifying executable memory.
+#[inline(always)]
+pub unsafe fn flush_instruction_cache() {
+    core::arch::asm!(
+        "dsb ish",
+        "ic iallu",
+        "dsb ish",
+        "isb"
+    );
 }

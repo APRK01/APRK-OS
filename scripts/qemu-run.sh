@@ -22,7 +22,7 @@ QEMU="qemu-system-aarch64"
 if ! command -v $QEMU &> /dev/null; then
     echo "Error: $QEMU not found. Please install QEMU."
     echo "  macOS: brew install qemu"
-    echo "  Linux: sudo apt install qemu-system-arm"
+    echo "  Debian/Ubuntu: sudo apt install qemu-system-arm"
     exit 1
 fi
 

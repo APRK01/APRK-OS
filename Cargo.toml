@@ -10,6 +10,8 @@ resolver = "2"
 members = [
     "kernel",
     "arch/arm64",
+    "user/lib",
+    "user/hello",
 ]
 
 [workspace.package]

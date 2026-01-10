@@ -80,6 +80,26 @@ fn execute_command(cmd_line: &str) {
                 println!("Usage: cat <filename>");
             }
         },
+        "exec" => {
+            if let Some(filename) = args.get(0) {
+                if let Some(file) = crate::fs::get_file(crate::fs::RAMDISK, filename) {
+                     println!("Loading '{}'...", filename);
+                     unsafe {
+                         if let Some(entry) = crate::loader::load_elf(file.data) {
+                             println!("Spawning process at {:#x}...", entry);
+                             let entry_fn: extern "C" fn() = core::mem::transmute(entry);
+                             crate::sched::spawn(entry_fn);
+                         } else {
+                             println!("Failed to load ELF.");
+                         }
+                     }
+                } else {
+                    println!("Error: File '{}' not found", filename);
+                }
+            } else {
+                println!("Usage: exec <filename>");
+            }
+        },
         _ => println!("Unknown command: '{}'", cmd),
     }
 }

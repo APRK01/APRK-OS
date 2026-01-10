@@ -29,8 +29,18 @@ DISK_IMG = disk.tar
 .PHONY: all
 all: build ## Build everything
 
+# User Programs
+USER_BIN_DIR = target/aarch64-unknown-none/release
+
+.PHONY: user
+user: ## Build user programs
+	@echo "$(GREEN)[USER]$(NC) Building Userland..."
+	RUSTFLAGS="-C link-arg=-Ttext=0x40200000 -C link-arg=-zmax-page-size=4096" cargo build -p hello --release --target aarch64-unknown-none
+	@mkdir -p $(DISK_DIR)
+	@cp $(USER_BIN_DIR)/hello $(DISK_DIR)/hello
+
 .PHONY: disk
-disk: ## Create RAM disk image
+disk: user ## Create RAM disk image
 	@echo "$(GREEN)[DISK]$(NC) Creating disk image..."
 	@mkdir -p $(DISK_DIR)
 	@if [ ! -f $(DISK_DIR)/hello.txt ]; then \

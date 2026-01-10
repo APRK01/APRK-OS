@@ -11,6 +11,7 @@ use aprk_arch_arm64::cpu;
 pub enum TaskState {
     Ready,
     Running,
+    Dead,
 }
 
 #[derive(Debug)]
@@ -73,14 +74,40 @@ pub fn spawn(entry: extern "C" fn()) {
     unsafe { TASKS.push(task) };
 }
 
+/// Terminate the current task and switch to another
+pub fn exit_current_task() -> ! {
+    unsafe {
+        crate::println!("[sched] Task {} Exiting.", TASKS[CURRENT_TASK].id);
+        TASKS[CURRENT_TASK].state = TaskState::Dead;
+        schedule();
+        loop { aprk_arch_arm64::cpu::halt(); }
+    }
+}
+
 pub fn schedule() {
     unsafe {
         if TASKS.len() <= 1 { return; }
         
         let current_id = CURRENT_TASK;
-        let next_id = (current_id + 1) % TASKS.len();
+        let mut next_id = (current_id + 1) % TASKS.len();
         
-        if current_id == next_id { return; }
+        // Find next non-dead task
+        loop {
+            if next_id == current_id {
+                // We wrapped around.
+                if TASKS[current_id].state == TaskState::Dead {
+                    // Everyone is dead! Panic.
+                    crate::println!("[sched] All tasks dead! Halting.");
+                    loop { aprk_arch_arm64::cpu::halt(); }
+                }
+                return; // Nothing new to run, stay on current (if alive).
+            }
+
+            if TASKS[next_id].state != TaskState::Dead {
+                break; // Found one
+            }
+            next_id = (next_id + 1) % TASKS.len();
+        }
         
         CURRENT_TASK = next_id;
         

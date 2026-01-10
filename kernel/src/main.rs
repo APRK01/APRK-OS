@@ -14,7 +14,7 @@
 
 extern crate alloc;
 
-use aprk_arch_arm64::{self as arch, cpu, println};
+use aprk_arch_arm64::{self as arch, cpu, print, println};
 use alloc::vec::Vec;
 use core::panic::PanicInfo;
 
@@ -22,6 +22,7 @@ mod mm;
 mod sched;
 mod shell;
 pub mod fs;
+mod loader;
 
 // Task 1 Function (Replaced by Shell)
 // extern "C" fn task_one() { ... }
@@ -132,10 +133,32 @@ pub extern "C" fn kernel_main() -> ! {
     }
 }
 
+
 // Timer Callback
 #[no_mangle]
 pub extern "Rust" fn kernel_tick() {
     sched::schedule();
+}
+
+// Syscall Handler
+#[no_mangle]
+pub extern "C" fn kernel_syscall_handler(id: u64, arg0: u64, arg1: u64) {
+    match id {
+        0 => { // Print
+            let ptr = arg0 as *const u8;
+            let len = arg1 as usize;
+            // Validate pointer? Assumed valid for now (Shared address space)
+            let s = unsafe { 
+                let slice = core::slice::from_raw_parts(ptr, len);
+                core::str::from_utf8(slice).unwrap_or("<?>")
+            };
+            print!("{}", s);
+        },
+        1 => { // Exit
+            sched::exit_current_task();
+        },
+        _ => println!("Unknown Syscall: {}", id),
+    }
 }
 
 // =============================================================================
