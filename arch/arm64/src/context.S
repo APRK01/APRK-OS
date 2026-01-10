@@ -38,3 +38,60 @@ context_switch:
 
     // 5. Return (to the address in x30/LR of the new task)
     ret
+
+// =============================================================================
+// Enter User Mode
+// =============================================================================
+// void enter_user_mode(u64 entry, u64 stack);
+// x0 = Entry Point
+// x1 = Stack Pointer (SP_EL0)
+.global enter_user_mode
+enter_user_mode:
+    // Mask all exceptions (D, A, I, F)
+    msr     daifset, #0xf
+
+    // SPSR_EL1 (Saved Program Status Register)
+    // M[3:0] = 0000 -> EL0t
+    msr     spsr_el1, xzr
+
+    // ELR_EL1 (Exception Link Register) -> Entry Point
+    msr     elr_el1, x0
+
+    // SP_EL0 (Stack Pointer for EL0) -> Stack
+    msr     sp_el0, x1
+
+    // Zero out general purpose registers to prevent info leak (optional but good practice)
+    mov     x0, xzr
+    mov     x1, xzr
+    mov     x2, xzr
+    mov     x3, xzr
+    mov     x4, xzr
+    mov     x5, xzr
+    mov     x6, xzr
+    mov     x7, xzr
+    mov     x8, xzr
+    mov     x9, xzr
+    mov     x10, xzr
+    mov     x11, xzr
+    mov     x12, xzr
+    mov     x13, xzr
+    mov     x14, xzr
+    mov     x15, xzr
+    mov     x16, xzr
+    mov     x17, xzr
+    mov     x18, xzr
+    mov     x19, xzr
+    mov     x20, xzr
+    mov     x21, xzr
+    mov     x22, xzr
+    mov     x23, xzr
+    mov     x24, xzr
+    mov     x25, xzr
+    mov     x26, xzr
+    mov     x27, xzr
+    mov     x28, xzr
+    mov     x29, xzr
+    mov     x30, xzr
+
+    // Return from exception -> Jumps to EL0
+    eret
