@@ -35,26 +35,39 @@
 |---------|--------|
 | ARM64 Boot | ✅ |
 | Serial Console (UART) | ✅ |
-| Basic Panic Handler | ✅ |
-| Memory Management | 🚧 |
-| Process Scheduler | 🔜 |
-| File System | 🔜 |
-| Userspace | 🔜 |
+| Exception Handling | ✅ |
+| Interrupt Controller (GICv2) | ✅ |
+| Timer (ARM Generic Timer) | ✅ |
+| Memory Management (PMM + Heap) | ✅ |
+| Process Scheduler | ✅ |
+| File System (TarFS) | ✅ |
+| ELF Loader | ✅ |
+| Userspace Loading | ✅ |
+| True EL0 Userspace | 🔜 |
+| Memory Isolation | 🔜 |
 
 ## Features
 
 ### Implemented
 - **ARM64 Bare Metal Boot**: Custom boot assembly that initializes the CPU
-- **PL011 UART Driver**: Serial console output for QEMU virt machine
-- **Panic Handling**: Graceful kernel panic with debug information
+- **PL011 UART Driver**: Serial console with interrupt support
+- **Exception Handling**: Full exception vector table for ARM64
+- **GICv2 Interrupt Controller**: Hardware interrupt management
+- **ARM Generic Timer**: Preemptive scheduling with 100ms ticks
+- **Physical Memory Manager**: Bitmap-based page allocation
+- **Heap Allocator**: Dynamic memory allocation (16MB heap)
+- **Process Scheduler**: Round-robin with priority levels and task states
+- **TarFS File System**: Read-only TAR archive file system
+- **ELF Loader**: Load and execute executable binaries
+- **Interactive Shell**: Command-line interface with exec, ls, cat, help
+- **Syscall Interface**: print, exit, getpid, yield, sleep
+- **Userspace Library**: `aprk-user-lib` crate for user programs
 
 ### Coming Soon
-- Exception handling and interrupts
-- Physical and virtual memory management
-- Process scheduling
-- System calls
-- File system
-- User mode programs
+- True EL0 userspace execution (currently runs in EL1)
+- Per-process page tables and memory isolation
+- More system calls
+- Process wait/signal mechanisms
 
 ## Building
 
