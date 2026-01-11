@@ -88,7 +88,7 @@ fn execute_command(cmd_line: &str) {
                          if let Some(entry) = crate::loader::load_elf(file.data) {
                              println!("Spawning process at {:#x}...", entry);
                              let entry_fn: extern "C" fn() = core::mem::transmute(entry);
-                             crate::sched::spawn(entry_fn);
+                             crate::sched::spawn_named(entry_fn, filename, crate::sched::Priority::Normal);
                          } else {
                              println!("Failed to load ELF.");
                          }

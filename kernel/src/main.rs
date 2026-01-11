@@ -76,7 +76,7 @@ pub extern "C" fn kernel_main() -> ! {
     
     // Initialize Scheduler
     sched::init();
-    sched::spawn(shell::run);
+    sched::spawn_named(shell::run, "shell", sched::Priority::High);
     // sched::spawn(task_two);
     
     // Test Heap
