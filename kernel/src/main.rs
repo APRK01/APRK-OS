@@ -27,7 +27,7 @@ mod shell;
 mod syscall;
 
 /// APRK OS version
-const VERSION: &str = "0.0.1";
+const VERSION: &str = "0.1.0";
 
 /// APRK OS codename
 const CODENAME: &str = "Genesis";

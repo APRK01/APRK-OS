@@ -13,7 +13,7 @@ fn print_fetch() {
     
     println!("\x1b[1;36m      /\\      \x1b[1;37m  root\x1b[0m@\x1b[1;36maprk\x1b[0m");
     println!("\x1b[1;36m     /  \\     \x1b[1;37m  ---------\x1b[0m");
-    println!("\x1b[1;36m    /    \\    \x1b[1;36m  OS: \x1b[0mAPRK OS 0.0.1 (Genesis)");
+    println!("\x1b[1;36m    /    \\    \x1b[1;36m  OS: \x1b[0mAPRK OS 0.1.0 (Genesis)");
     println!("\x1b[1;36m   /  /\\  \\   \x1b[1;36m  Kernel: \x1b[0mAPRKv8-aarch64");
     println!("\x1b[1;36m  /  /--\\  \\  \x1b[1;36m  EL: \x1b[0mEL{}", current_el);
     println!("\x1b[1;36m / _/    \\_ \\ \x1b[1;36m  Tasks: \x1b[0m{}", task_count);
